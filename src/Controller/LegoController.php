@@ -31,7 +31,7 @@ class LegoController extends AbstractController
 
    public function __construct()
    {
-       $json = file_get_contents(__DIR__ . "../data.json");
+       $json = file_get_contents(__DIR__ . "../../data.json");
        $legosdata = json_decode($json);
 
          foreach ($legosdata as $legodata) {
@@ -39,19 +39,19 @@ class LegoController extends AbstractController
                 $lego->setDescription($legodata->description);
                 $lego->setPrice($legodata->price);
                 $lego->setPieces($legodata->pieces);
-                dd($lego);
-                $lego->setBoxImage($legodata->images->boxImage);
-                $lego->setLegoImage($legodata->images->legoImage);
+                $lego->setBoxImage($legodata->images->box);
+                $lego->setLegoImage($legodata->images->bg);
                 $this->legos[] = $lego;
+                //dd($lego);
          }
    }
 
    #[Route('/', )]
    public function home()
    {
-    return $this->render('home.html.twig', [
-        'legos' => $this->legos,
-    ]);
+         return $this->render('/lego.html.twig', [
+              'legos' => $this->legos
+         ]);
    }
 
 
@@ -60,6 +60,19 @@ class LegoController extends AbstractController
     {
         die("I'm the best.");
     }
+
+    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator|Star Wars|Expert'])]
+    public function filter($collection): Response
+    {
+        $legos = array_filter($this->legos, function ($lego) use ($collection) {
+            return $lego->getCollection() === $collection;
+        });
+
+        return $this->render('lego.html.twig', [
+            'legos' => $legos
+        ]);
+    }
+
 }
 
 
