@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Lego;
+use App\Service\CreditsGenerator;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
@@ -72,6 +73,13 @@ class LegoController extends AbstractController
             'legos' => $legos
         ]);
     }
+
+    #[Route('/credits', 'credits')]
+    public function credits(CreditsGenerator $credits): Response
+    {
+        return new Response($credits->getCredits());
+    }
+
 
 }
 
