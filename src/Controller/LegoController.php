@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Lego;
 use App\Service\CreditsGenerator;
+use App\Service\DatabaseInterface;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
@@ -28,32 +29,8 @@ class LegoController extends AbstractController
    // "/" à la méthode home pour que Symfony l'exécute chaque fois
    // que l'on accède à la racine de notre site.
 
-   private array $legos;
 
-   public function __construct()
-   {
-       $json = file_get_contents(__DIR__ . "../../data.json");
-       $legosdata = json_decode($json);
 
-         foreach ($legosdata as $legodata) {
-                $lego = new Lego($legodata->id, $legodata->name, $legodata->collection);
-                $lego->setDescription($legodata->description);
-                $lego->setPrice($legodata->price);
-                $lego->setPieces($legodata->pieces);
-                $lego->setBoxImage($legodata->images->box);
-                $lego->setLegoImage($legodata->images->bg);
-                $this->legos[] = $lego;
-                //dd($lego);
-         }
-   }
-
-   #[Route('/', )]
-   public function home()
-   {
-         return $this->render('/lego.html.twig', [
-              'legos' => $this->legos
-         ]);
-   }
 
 
     #[Route('/me', )]
@@ -61,23 +38,34 @@ class LegoController extends AbstractController
     {
         die("I'm the best.");
     }
-
-    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator|Star Wars|Expert'])]
+    /*
+    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator Expert|Star Wars|Creator'])]
     public function filter($collection): Response
     {
-        $legos = array_filter($this->legos, function ($lego) use ($collection) {
+        $legos = $database->getAllLegoSets();
+        $legoso = array_filter($legos, function ($lego) use ($collection) {
             return $lego->getCollection() === $collection;
         });
 
         return $this->render('lego.html.twig', [
-            'legos' => $legos
+            'legos' => $legoso
         ]);
     }
+    */
 
     #[Route('/credits', 'credits')]
     public function credits(CreditsGenerator $credits): Response
     {
         return new Response($credits->getCredits());
+    }
+
+    #[Route('/')]
+    public function database(DatabaseInterface $database): Response
+    {
+        $legos = $database->getAllLegoSets();
+        return $this->render('lego.html.twig', [
+            'legos' => $legos
+        ]);
     }
 
 
