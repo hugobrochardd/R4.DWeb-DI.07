@@ -20,7 +20,7 @@ class Lego
     #[ORM\Column(length: 255)]
     private ?string $collection = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
     private ?string $description = null;
 
     #[ORM\Column]
@@ -39,6 +39,7 @@ class Lego
     public function __construct(?int $id = null)
     {
         $this->id = $id;
+        
     }
 
     public function getId(): ?int

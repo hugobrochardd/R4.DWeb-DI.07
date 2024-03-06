@@ -41,9 +41,9 @@ class LegoController extends AbstractController
     }
     
     #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator Expert|Star Wars|Creator|Harry Potter'])]
-    public function filter(DatabaseInterface $database, string $collection): Response
+    public function filter(EntityManagerInterface $database, string $collection): Response
     {
-        $legos = $database->getLegoByCollection($collection);
+        $legos = $database->getRepository(Lego::class)->findBy(['collection' => $collection]);
         return $this->render('lego.html.twig', [
             'legos' => $legos
         ]);
@@ -57,34 +57,14 @@ class LegoController extends AbstractController
     }
 
     #[Route('/')]
-    public function database(DatabaseInterface $database): Response
+    public function database(EntityManagerInterface $database): Response
     {
-        $legos = $database->getAllLegoSets();
+        $legos = $database->getRepository(Lego::class)->findAll();
         return $this->render('lego.html.twig', [
             'legos' => $legos
         ]);
     }
 
-    #[Route('/test', 'test')]
-
-    public function test(EntityManagerInterface $entityManager): Response
-    {
-        $l = new Lego(1234);
-        $l->setName("un beau Lego");
-        $l->setCollection("Lego espace");
-        $l->setDescription("Un lego de l'espace");
-        $l->setPrice(99.99);
-        $l->setPieces(1000);
-        $l->setBoxImage("https://www.lego.com/cdn/cs/set/assets/blt3e3f3d2d3d3d3d3d/10283.jpg?fit=bounds&format=jpg&quality=80&width=1600&height=1600&dpr=1");
-        $l->setLegoImage("https://www.lego.com/cdn/cs/set/assets/blt3e3f3d2d3d3d3d3d/10283.jpg?fit=bounds&format=jpg&quality=80&width=1600&height=1600&dpr=1");
-        // tell Doctrine you want to (eventually) save the Product (no queries yet)
-        $entityManager->persist($l);
-
-        // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();
-
-        return new Response('Saved new product with id '.$l->getId());
-    }
 
 
 
