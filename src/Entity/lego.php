@@ -17,8 +17,10 @@ class Lego
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+/*
     #[ORM\Column(length: 255)]
     private ?string $collection = null;
+*/
 
     #[ORM\Column(length: 1000)]
     private ?string $description = null;
@@ -34,6 +36,10 @@ class Lego
 
     #[ORM\Column(length: 255)]
     private ?string $legoImage = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Collection')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?LegoCollection $Collection = null;
 
 
     public function __construct(?int $id = null)
@@ -58,7 +64,7 @@ class Lego
 
         return $this;
     }
-
+/*
     public function getCollection(): ?string
     {
         return $this->collection;
@@ -70,7 +76,7 @@ class Lego
 
         return $this;
     }
-
+*/
     public function getDescription(): ?string
     {
         return $this->description;
@@ -127,6 +133,18 @@ class Lego
     public function setLegoImage(string $legoImage): static
     {
         $this->legoImage = $legoImage;
+
+        return $this;
+    }
+
+    public function getCollection(): ?LegoCollection
+    {
+        return $this->Collection;
+    }
+
+    public function setCollection(?LegoCollection $Collection): static
+    {
+        $this->Collection = $Collection;
 
         return $this;
     }
